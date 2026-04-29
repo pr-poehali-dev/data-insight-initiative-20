@@ -66,16 +66,21 @@ function RainbowText({ text }: { text: string }) {
   );
 }
 
+const OWNER_PHONE = "+79270333319";
+
 // ─── AUTH ─────────────────────────────────────────────────────────────────────
 function AuthScreen({ onAuth }: { onAuth: (u: User) => void }) {
   const [mode, setMode] = useState<"login" | "register">("login");
   const [phone, setPhone] = useState(""); const [name, setName] = useState("");
   const [username, setUsername] = useState(""); const [avatar, setAvatar] = useState("");
+  const [password, setPassword] = useState(""); const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState(""); const [loading, setLoading] = useState(false);
+
+  const isOwner = phone.trim() === OWNER_PHONE;
 
   async function submit() {
     setError(""); setLoading(true);
-    const data = await apiFetch(API.auth, { action: mode === "login" ? "login" : "register", phone, name, username, avatar });
+    const data = await apiFetch(API.auth, { action: mode === "login" ? "login" : "register", phone, name, username, avatar, password });
     setLoading(false);
     if (data.error) return setError(data.error);
     await requestNotificationPermission();
@@ -100,7 +105,12 @@ function AuthScreen({ onAuth }: { onAuth: (u: User) => void }) {
             ))}
           </div>
           <div className="space-y-4">
-            <Field label="Номер телефона" value={phone} onChange={setPhone} placeholder="+7 999 000 00 00" type="tel" />
+            <div>
+              <Field label="Номер телефона" value={phone} onChange={setPhone} placeholder="+7 999 000 00 00" type="tel" />
+              {isOwner && (
+                <p className="text-[#5865f2] text-xs mt-1 font-medium">👑 Привет, владелец!</p>
+              )}
+            </div>
             {mode === "register" && (<>
               <Field label="Имя" value={name} onChange={setName} placeholder="Любое имя" />
               <div>
@@ -109,6 +119,23 @@ function AuthScreen({ onAuth }: { onAuth: (u: User) => void }) {
               </div>
               <Field label="Аватарка (эмодзи или буква)" value={avatar} onChange={v => setAvatar(v.slice(0,2))} placeholder="😎" />
             </>)}
+            <div>
+              <label className="text-[#b9bbbe] text-xs font-semibold uppercase tracking-wide mb-1.5 block">Пароль</label>
+              <div className="relative">
+                <input
+                  type={showPass ? "text" : "password"}
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  onKeyDown={e => e.key === "Enter" && submit()}
+                  placeholder={mode === "register" ? "Минимум 6 символов" : "Введите пароль"}
+                  className="w-full bg-[#202225] text-white placeholder-[#4f545c] rounded-md px-3 py-2.5 pr-10 text-sm outline-none focus:ring-2 focus:ring-[#5865f2] transition"
+                />
+                <button type="button" onClick={() => setShowPass(p => !p)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#72767d] hover:text-white transition">
+                  <Icon name={showPass ? "EyeOff" : "Eye"} size={16} />
+                </button>
+              </div>
+            </div>
             {error && <p className="text-[#ed4245] text-xs bg-[#ed4245]/10 rounded-md px-3 py-2">{error}</p>}
             <button onClick={submit} disabled={loading}
               className="w-full bg-[#5865f2] hover:bg-[#4752c4] disabled:opacity-50 text-white font-semibold rounded-md py-2.5 text-sm transition-all mt-2">
