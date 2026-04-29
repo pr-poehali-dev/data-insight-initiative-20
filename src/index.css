@@ -97,5 +97,15 @@
 
   body {
     @apply bg-background text-foreground;
+    overscroll-behavior: none;
+  }
+}
+
+@keyframes rainbow {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
   }
 }
