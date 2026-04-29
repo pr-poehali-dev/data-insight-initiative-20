@@ -1,0 +1,13 @@
+{
+  "tests": [
+    {
+      "name": "Login admin",
+      "method": "POST",
+      "path": "/",
+      "body": {"phone": "+79000000000"},
+      "expectedStatus": 200,
+      "expectedBody": {"username": "@admin"},
+      "bodyMatcher": "partial"
+    }
+  ]
+}

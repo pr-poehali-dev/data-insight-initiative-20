@@ -1,0 +1,13 @@
+{
+  "tests": [
+    {
+      "name": "Get chats for admin",
+      "method": "POST",
+      "path": "/",
+      "headers": {"X-User-Id": "admin-001"},
+      "body": {"action": "get_chats"},
+      "expectedStatus": 200,
+      "bodyMatcher": "partial"
+    }
+  ]
+}
